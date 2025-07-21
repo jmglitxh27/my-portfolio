@@ -51,6 +51,7 @@ const App = () => {
             - Contact: ale.ch2332@gmail.com
             - LinkedIn: https://www.linkedin.com/in/alejandroch2332/
             - Github: https://github.com/jmglitxh27
+            - Education: B.S in Computer Science, B.A in Political Science, Pursuing M.S in Computer Information Systems
         `
     };
 
