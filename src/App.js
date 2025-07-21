@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react'; // Fixed: Changed '=>' to 'from'
+import React, { useEffect, useRef } from 'react';
+import Chatbot from './Chatbot'; // Import the new Chatbot component
 
 // Main App Component
 const App = () => {
@@ -58,6 +59,9 @@ const App = () => {
 
             {/* Footer Section */}
             <Footer />
+
+            {/* Chatbot Component */}
+            <Chatbot /> 
         </div>
     );
 };
