@@ -31,6 +31,7 @@ const App = () => {
     const apiUrl = "https://api.openai.com/v1/chat/completions";
 
     try {
+        console.log(OPENAI_API_KEY);
         const response = await fetch(apiUrl, {
             method: "POST",
             headers: {
