@@ -1,4 +1,47 @@
-@import "tailwindcss";
+/* Tailwind CSS directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Google Font Import */
+/* This imports the 'Inter' font. Ensure this is also linked in your public/index.html */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Global styles for the application */
+body {
+    font-family: 'Inter', sans-serif; /* Apply the Inter font globally */
+    margin: 0; /* Remove default body margin */
+    padding: 0; /* Remove default body padding */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    background-color: #1a202c; /* A dark background color to match your theme (gray-900) */
+    color: #e2e8f0; /* Default text color (gray-200) */
+    min-height: 100vh; /* Ensure body takes at least full viewport height */
+    overflow-x: hidden; /* Prevent horizontal scrollbar on small screens */
+}
+
+/* Ensure root elements take full height for proper layout */
+html, #root {
+    height: 100%;
+}
+
+/* Custom Scrollbar Styles (for Webkit browsers like Chrome, Safari, Edge) */
+/* These styles were previously inline in your React component and are now global */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #374151; /* Background of the scrollbar track (gray-700) */
+    border-radius: 10px; /* Rounded corners for the track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #4f46e5; /* Color of the scrollbar thumb (indigo-600) */
+    border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #4338ca; /* Color of the scrollbar thumb on hover (indigo-700) */
+}
+
+/* You can add more global styles here if needed */
