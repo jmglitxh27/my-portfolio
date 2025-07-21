@@ -112,7 +112,7 @@ const About = () => {
                 <div className="flex flex-col md:flex-row items-center md:space-x-12">
                     {/* Placeholder Image */}
                     <div className="md:w-1/3 mb-8 md:mb-0">
-                        <img src="https://placehold.co/400x400/333333/e0e0e0?text=Your+Photo" alt="Your Photo" className="rounded-full shadow-2xl border-4 border-indigo-500 w-48 h-48 mx-auto md:w-full md:h-auto object-cover" />
+                        <img src="profile_picture.PNG" alt="Your Photo" className="rounded-full shadow-2xl border-4 border-indigo-500 w-48 h-48 mx-auto md:w-full md:h-auto object-cover" />
                     </div>
                     <div className="md:w-2/3 text-lg text-gray-300 leading-relaxed">
                         <p className="mb-4">
@@ -134,8 +134,8 @@ const About = () => {
 // Skills Component (unchanged from previous update, assuming it's working locally now)
 const Skills = () => {
     const skillsList = [
-        { name: 'Java', icon: '☕', imageUrl: 'https://placehold.co/60x60/f89820/ffffff?text=Java' },
-        { name: 'Python', icon: '🐍', imageUrl: '/images/python.png' },
+        { name: 'Java', icon: '☕', imageUrl: 'Java.png' },
+        { name: 'Python', icon: '🐍', imageUrl: 'Python.png' },
         { name: 'PHP', icon: '🐘', imageUrl: '/images/php.png' },
         { name: 'MySQL', icon: '🐬', imageUrl: 'https://placehold.co/60x60/00758f/ffffff?text=SQL' },
         { name: 'HTML', icon: '📄', imageUrl: 'https://placehold.co/60x60/e34c26/ffffff?text=HTML' },
@@ -192,7 +192,7 @@ const Projects = () => {
             title: 'Deep Learning-Based Classification of Pain Responses in Mice',
             date: 'Apr 2024',
             description: 'Developed a deep learning model for binary classification of mice pain using CNN architecture with a fully connected layer and sigmoid activation. Model developed using Python.',
-            imageUrl: '/images/deep_learning.png',
+            imageUrl: 'MousePain.png',
             liveLink: '#',
             githubLink: '#'
         },
@@ -200,7 +200,7 @@ const Projects = () => {
             title: 'Machine Learning Analysis of Olfactory-Guided Food Seeking Behavior',
             date: 'Jul 2023',
             description: 'Researched classifying videos of mice displaying anoxia from anoxia related behavior by training a mammalian tracking model and using motion sequencing software. Primarily used Python.',
-            imageUrl: '/images/machine_learning.png',
+            imageUrl: 'DeepLearning.png',
             liveLink: '#',
             githubLink: '#'
         },
