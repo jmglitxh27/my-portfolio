@@ -20,52 +20,51 @@ const App = () => {
 
     // Send message and call Gemini API
     const handleSendMessage = async (e) => {
-        e.preventDefault();
-        if (input.trim() === '') return;
+    e.preventDefault();
+    if (input.trim() === '') return;
 
-        const newMessages = [...messages, { sender: 'user', text: input }];
-        setMessages(newMessages);
-        setInput('');
+    const newMessages = [...messages, { sender: 'user', text: input }];
+    setMessages(newMessages);
+    setInput('');
 
-        const GEMINI_API_KEY = ''; // Add your Gemini API key here
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY; // from Vercel env
+    const apiUrl = "https://api.openai.com/v1/chat/completions";
 
-        try {
-            const chatHistory = newMessages.map(msg => ({
-                role: msg.sender === 'user' ? 'user' : 'model',
-                parts: [{ text: msg.text }]
-            }));
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${OPENAI_API_KEY}`,
+            },
+            body: JSON.stringify({
+                model: "gpt-4o-mini", // or "gpt-4" if you have access
+                messages: newMessages.map(msg => ({
+                    role: msg.sender === 'user' ? 'user' : 'assistant',
+                    content: msg.text
+                })),
+                max_tokens: 150,
+            }),
+        });
 
-            const payload = {
-                contents: chatHistory,
-                generationConfig: {
-                    maxOutputTokens: 100,
-                },
-            };
+        const result = await response.json();
+        console.log(result);
 
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-
-            let botResponseText = "Sorry, I'm having trouble connecting right now. Please try again later.";
-            if (result.candidates && result.candidates.length > 0 &&
-                result.candidates[0].content && result.candidates[0].content.parts &&
-                result.candidates[0].content.parts.length > 0) {
-                botResponseText = result.candidates[0].content.parts[0].text;
-            } else {
-                console.error("Unexpected API response structure:", result);
-            }
-
-            setMessages(prevMessages => [...prevMessages, { sender: 'bot', text: botResponseText }]);
-        } catch (error) {
-            console.error("Error communicating with Gemini API:", error);
-            setMessages(prevMessages => [...prevMessages, { sender: 'bot', text: "Sorry, I'm having trouble connecting right now. Please try again later." }]);
+        let botResponseText = "Sorry, I'm having trouble connecting right now.";
+        if (result.choices && result.choices.length > 0) {
+            botResponseText = result.choices[0].message.content;
         }
-    };
+
+        setMessages(prevMessages => [...prevMessages, { sender: 'bot', text: botResponseText }]);
+    } catch (error) {
+        console.error("Error communicating with OpenAI API:", error);
+        setMessages(prevMessages => [
+            ...prevMessages,
+            { sender: 'bot', text: "Sorry, I'm having trouble connecting right now." },
+        ]);
+    }
+};
+
 
     // General App useEffect for video and smooth scrolling
     useEffect(() => {
