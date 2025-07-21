@@ -36,6 +36,8 @@ const App = () => {
         content: `
             You are Alejandro Chavez-Mayoral's portfolio assistant. 
             Only answer questions related to Alejandro's portfolio, skills, projects, or website content.
+            Also, consider the information on Alejandro's LinkedIn (https://www.linkedin.com/in/alejandroch2332/)
+            and Github (https://github.com/jmglitxh27) when answering questions about him.
             If the user asks unrelated questions, respond with: 
             "I can only answer questions about Alejandro Chavez-Mayoral's portfolio and projects."
             
@@ -46,7 +48,9 @@ const App = () => {
               Machine Learning Analysis of Olfactory-Guided Food Seeking Behavior, 
               Banking System and Database using MySQL and PHP, 
               Pre-Screening Vitals in Telehealth using Remote Photoplethysmography.
-            - Contact: your.email@example.com
+            - Contact: ale.ch2332@gmail.com
+            - LinkedIn: https://www.linkedin.com/in/alejandroch2332/
+            - Github: https://github.com/jmglitxh27
         `
     };
 
@@ -412,19 +416,19 @@ const Contact = () => (
                 I'm always open to new opportunities and collaborations. Feel free to reach out!
             </p>
             <div className="flex flex-col items-center space-y-4 mb-8">
-                <a href="mailto:your.email@example.com" className="text-indigo-300 hover:text-indigo-400 text-xl flex items-center space-x-2 transition duration-300 ease-in-out">
+                <a href="ale.ch2332@gmail.com" className="text-indigo-300 hover:text-indigo-400 text-xl flex items-center space-x-2 transition duration-300 ease-in-out">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-2 4v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7m3 4l4-4m-4 4l-4-4m12 0l4 4m-4-4l4-4"/>
                     </svg>
                     <span>ale.ch2332@gmail.com</span>
                 </a>
                 <div className="flex space-x-6 mt-4">
-                    <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition duration-300 ease-in-out">
+                    <a href="https://www.linkedin.com/in/alejandroch2332/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition duration-300 ease-in-out">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.98v16h4.98v-8.798c0-2.668 1.452-3.89 3.337-3.89 1.951 0 2.767 1.125 2.767 3.218v9.47h5v-10.13c0-4.636-2.883-7.13-6.635-7.13-3.154 0-4.66 1.714-5.465 2.998h-.04v-2.108h-4.98z"/>
                         </svg>
                     </a>
-                    <a href="https://github.com/yourprofile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition duration-300 ease-in-out">
+                    <a href="https://github.com/jmglitxh27" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition duration-300 ease-in-out">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.08-.731.084-.716.084-.716 1.192.085 1.815 1.229 1.815 1.229 1.064 1.816 2.809 1.299 3.49.993.108-.775.418-1.299.762-1.599-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.118-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.046.138 3.003.404 2.292-1.552 3.3-.928 3.3-.928.654 1.652.243 2.873.12 3.176.766.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.197-6.091 8.197-11.387 0-6.627-5.373-12-12-12z"/>
                         </svg>
