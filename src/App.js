@@ -19,7 +19,7 @@ const App = () => {
     }, [messages]);
 
     // Send message and call Gemini API
-    const handleSendMessage = async (e) => {
+   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (input.trim() === '') return;
 
@@ -27,8 +27,28 @@ const App = () => {
     setMessages(newMessages);
     setInput('');
 
-    const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY; // from Vercel env
+    const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
     const apiUrl = "https://api.openai.com/v1/chat/completions";
+
+    // Define the custom context for your chatbot
+    const systemMessage = {
+        role: "system",
+        content: `
+            You are Alejandro Chavez-Mayoral's portfolio assistant. 
+            Only answer questions related to Alejandro's portfolio, skills, projects, or website content.
+            If the user asks unrelated questions, respond with: 
+            "I can only answer questions about Alejandro Chavez-Mayoral's portfolio and projects."
+            
+            Portfolio Info:
+            - Name: Alejandro Chavez-Mayoral
+            - Skills: Java, Python, PHP, MySQL, HTML, Microsoft Office, Linux Fedora, MATLAB
+            - Projects: Deep Learning-Based Classification of Pain Responses in Mice, 
+              Machine Learning Analysis of Olfactory-Guided Food Seeking Behavior, 
+              Banking System and Database using MySQL and PHP, 
+              Pre-Screening Vitals in Telehealth using Remote Photoplethysmography.
+            - Contact: your.email@example.com
+        `
+    };
 
     try {
         console.log(OPENAI_API_KEY);
@@ -39,12 +59,15 @@ const App = () => {
                 "Authorization": `Bearer ${OPENAI_API_KEY}`,
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini", // or "gpt-4" if you have access
-                messages: newMessages.map(msg => ({
-                    role: msg.sender === 'user' ? 'user' : 'assistant',
-                    content: msg.text
-                })),
-                max_tokens: 150,
+                model: "gpt-4o-mini",
+                messages: [
+                    systemMessage,
+                    ...newMessages.map(msg => ({
+                        role: msg.sender === 'user' ? 'user' : 'assistant',
+                        content: msg.text
+                    }))
+                ],
+                max_tokens: 200,
             }),
         });
 
@@ -393,7 +416,7 @@ const Contact = () => (
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-2 4v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7m3 4l4-4m-4 4l-4-4m12 0l4 4m-4-4l4-4"/>
                     </svg>
-                    <span>your.email@example.com</span>
+                    <span>ale.ch2332@gmail.com</span>
                 </a>
                 <div className="flex space-x-6 mt-4">
                     <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition duration-300 ease-in-out">
