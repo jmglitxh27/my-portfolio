@@ -1,11 +1,114 @@
-import React, { useEffect, useRef } from 'react';
-import Chatbot from 'Chatbot.js'; // Import the new Chatbot component
+import React, { useState, useRef, useEffect } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-// Main App Component
+// Main App Component - This now contains everything
 const App = () => {
     // Ref for the video element to ensure it plays inline
     const videoRef = useRef(null);
 
+    // Chatbot specific states and refs
+    const [isChatbotOpen, setIsChatbotOpen] = useState(false); // Renamed to avoid conflict with App's isOpen
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState('');
+    const chatContainerRef = useRef(null);
+    const [userId, setUserId] = useState(null); // State to store the user ID
+    const [isAuthReady, setIsAuthReady] = useState(false); // State to track auth readiness
+
+    // Initialize Firebase and handle authentication for the chatbot
+    useEffect(() => {
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        let app;
+        try {
+            app = initializeApp(firebaseConfig);
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+            return;
+        }
+
+        const auth = getAuth(app);
+        const db = getFirestore(app); // Get Firestore instance
+
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                setUserId(user.uid);
+            } else {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined') {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Firebase anonymous sign-in error:", error);
+                }
+            }
+            setIsAuthReady(true);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    // Scroll to the bottom of the chat on new messages
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+    const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (input.trim() === '') return;
+
+        const newMessages = [...messages, { sender: 'user', text: input }];
+        setMessages(newMessages);
+        setInput('');
+
+        const GEMINI_API_KEY = ""; // Canvas environment will provide this
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+        try {
+            const chatHistory = newMessages.map(msg => ({
+                role: msg.sender === 'user' ? 'user' : 'model',
+                parts: [{ text: msg.text }]
+            }));
+
+            const payload = {
+                contents: chatHistory,
+                generationConfig: {
+                    maxOutputTokens: 100,
+                },
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            let botResponseText = "Sorry, I'm having trouble connecting right now. Please try again later.";
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                botResponseText = result.candidates[0].content.parts[0].text;
+            } else {
+                console.error("Unexpected API response structure:", result);
+            }
+
+            setMessages(prevMessages => [...prevMessages, { sender: 'bot', text: botResponseText }]);
+        } catch (error) {
+            console.error("Error communicating with Gemini API:", error);
+            setMessages(prevMessages => [...prevMessages, { sender: 'bot', text: "Sorry, I'm having trouble connecting right now. Please try again later." }]);
+        }
+    };
+
+
+    // General App useEffect for video and smooth scrolling
     useEffect(() => {
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -25,13 +128,37 @@ const App = () => {
         if (videoRef.current) {
             videoRef.current.play().catch(error => {
                 console.error("Video autoplay failed:", error);
-                // Fallback for autoplay restrictions: user might need to interact
             });
         }
     }, []);
 
     return (
         <div className="antialiased">
+            {/* Tailwind CSS CDN and Font */}
+            <script src="https://cdn.tailwindcss.com"></script>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+            <style>
+                {`
+                body {
+                    font-family: 'Inter', sans-serif;
+                }
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 8px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: #374151; /* gray-700 */
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: #4f46e5; /* indigo-600 */
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: #4338ca; /* indigo-700 */
+                }
+                `}
+            </style>
+
             {/* Video Background */}
             <video autoPlay loop muted playsInline id="videoBackground" ref={videoRef} className="fixed top-0 left-0 w-full h-full object-cover z-[-1] blur-[1px] opacity-[0.9]">
                 {/* IMPORTANT: Ensure 'rubix_bg.mp4' is in your public folder */}
@@ -60,8 +187,68 @@ const App = () => {
             {/* Footer Section */}
             <Footer />
 
-            {/* Chatbot Component */}
-            <Chatbot /> 
+            {/* Chatbot Toggle Button */}
+            <button
+                onClick={() => setIsChatbotOpen(!isChatbotOpen)}
+                className="fixed bottom-6 right-6 bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-lg z-50 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                aria-label="Open Chatbot"
+            >
+                {isChatbotOpen ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                )}
+            </button>
+
+            {/* Chatbot Window */}
+            {isChatbotOpen && (
+                <div className="fixed bottom-20 right-6 w-80 h-96 bg-gray-800 rounded-lg shadow-xl flex flex-col z-40 border border-gray-700 overflow-hidden sm:w-96 sm:h-[450px] md:w-[400px] md:h-[500px]">
+                    <div className="bg-indigo-600 text-white p-3 rounded-t-lg flex items-center justify-between">
+                        <h3 className="font-bold text-lg">AI Assistant</h3>
+                        {userId && <span className="text-sm text-gray-200">User ID: {userId.substring(0, 8)}...</span>}
+                        <button onClick={() => setIsChatbotOpen(false)} className="text-white hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-600 rounded-full p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div ref={chatContainerRef} className="flex-1 p-4 overflow-y-auto custom-scrollbar">
+                        {messages.length === 0 && (
+                            <p className="text-gray-400 text-center italic">Type a message to start chatting!</p>
+                        )}
+                        {messages.map((msg, index) => (
+                            <div
+                                key={index}
+                                className={`mb-2 p-2 rounded-lg max-w-[80%] break-words ${
+                                    msg.sender === 'user' ? 'bg-indigo-700 text-white ml-auto' : 'bg-gray-700 text-gray-200 mr-auto'
+                                }`}
+                            >
+                                {msg.text}
+                            </div>
+                        ))}
+                    </div>
+                    <form onSubmit={handleSendMessage} className="p-3 border-t border-gray-700 flex">
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            placeholder="Type your message..."
+                            className="flex-1 bg-gray-900 text-white rounded-l-md p-2 outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500"
+                            aria-label="Type your message"
+                        />
+                        <button
+                            type="submit"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-r-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                        >
+                            Send
+                        </button>
+                    </form>
+                </div>
+            )}
         </div>
     );
 };
@@ -71,11 +258,9 @@ const Header = () => {
     return (
         <header className="bg-black text-white p-4 shadow-lg sticky top-0 z-50">
             <nav className="container mx-auto flex justify-between items-center px-4">
-                {/* Your Name/Logo */}
                 <a href="#" className="text-2xl font-bold text-indigo-400 hover:text-indigo-300 transition duration-300 ease-in-out">
                     Alejandro Chavez-Mayoral
                 </a>
-                {/* Navigation Links */}
                 <ul className="flex space-x-6">
                     <li><a href="#about" className="hover:text-indigo-400 transition duration-300 ease-in-out">About</a></li>
                     <li><a href="#skills" className="hover:text-indigo-400 transition duration-300 ease-in-out">Skills</a></li>
@@ -91,7 +276,6 @@ const Header = () => {
 const Hero = () => {
     return (
         <section id="hero" className="relative h-[70vh] flex items-center justify-center text-center p-4 overflow-hidden">
-            {/* Hero Content */}
             <div className="hero-content max-w-4xl mx-auto bg-black bg-opacity-20 p-8 rounded-lg backdrop-blur-sm">
                 <h1 className="text-5xl md:text-6xl font-extrabold text-white leading-tight mb-4 animate-fade-in-down">
                     Hi, I'm <span className="text-indigo-400">Alejandro</span>
@@ -114,11 +298,10 @@ const About = () => {
             <div className="container mx-auto max-w-4xl">
                 <h2 className="text-4xl font-bold text-center text-indigo-400 mb-12">About Me</h2>
                 <div className="flex flex-col md:flex-row items-center md:space-x-12">
-                    {/* Placeholder Image */}
                     <div className="md:w-1/3 mb-8 md:mb-0">
                         <img src="profile_picture.PNG" alt="Your Photo" className="rounded-full shadow-2xl border-4 border-indigo-500 w-48 h-48 mx-auto md:w-full md:h-auto object-cover" />
                     </div>
-                    <div className="md:w-3/4 text-lg text-gray-300 leading-relaxed"> {/* Changed md:w-2/3 to md:w-3/4 */}
+                    <div className="md:w-3/4 text-lg text-gray-300 leading-relaxed">
                         <p className="mb-4">
                             Hello! I'm Alejandro Chavez-Mayoral, a research-oriented senior pursuing a B.S. in Computer Science, and currently advancing my expertise as an M.S. in Computer Information Systems student at Kean University.
                         </p>
@@ -135,7 +318,7 @@ const About = () => {
     );
 };
 
-// Skills Component (unchanged from previous update, assuming it's working locally now)
+// Skills Component
 const Skills = () => {
     const skillsList = [
         { name: 'Java', icon: '☕', imageUrl: 'Java.png' },
@@ -221,16 +404,14 @@ const Projects = () => {
             liveLink: 'https://docs.google.com/presentation/d/1PsCYDHTr3hrXptPEoMQ7KMT_ej3YyEQA/edit?usp=sharing&ouid=117950792585934078015&rtpof=true&sd=true',
             githubLink: '#'
         },
-        // Add more project cards as needed, ensuring imageUrl points to your public/images/
     ];
 
     return (
         <section id="projects" className="py-16 md:py-24 bg-gray-900 px-4">
-            <div className="container mx-auto max-w-6xl w-full"> {/* Added w-full here */}
+            <div className="container mx-auto max-w-6xl w-full">
                 <h2 className="text-4xl font-bold text-center text-indigo-400 mb-12">My Projects</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {projectsList.map((project, index) => (
-                        // Changed background from bg-gray-800 to bg-gray-700 for better contrast
                         <div key={index} className="bg-gray-700 rounded-lg shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out border border-gray-700">
                             <img src={project.imageUrl} alt={`${project.title} Image`} className="w-full h-48 object-cover" onError={(e) => { e.target.src = 'https://placehold.co/600x400/444444/e0e0e0?text=Image+Not+Found'; }} />
                             <div className="p-6">
@@ -266,7 +447,6 @@ const Contact = () => {
                         </svg>
                         <span>your.email@example.com</span>
                     </a>
-                    {/* Add social media links here */}
                     <div className="flex space-x-6 mt-4">
                         <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition duration-300 ease-in-out">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
@@ -278,7 +458,6 @@ const Contact = () => {
                                 <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.08-.731.084-.716.084-.716 1.192.085 1.815 1.229 1.815 1.229 1.064 1.816 2.809 1.299 3.49.993.108-.775.418-1.299.762-1.599-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.118-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.046.138 3.003.404 2.292-1.552 3.3-.928 3.3-.928.654 1.652.243 2.873.12 3.176.766.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.197-6.091 8.197-11.387 0-6.627-5.373-12-12-12z"/>
                             </svg>
                         </a>
-                        {/* Add more social media icons as needed */}
                     </div>
                 </div>
             </div>
