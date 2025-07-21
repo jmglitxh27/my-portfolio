@@ -114,15 +114,15 @@ const About = () => {
                     <div className="md:w-1/3 mb-8 md:mb-0">
                         <img src="profile_picture.PNG" alt="Your Photo" className="rounded-full shadow-2xl border-4 border-indigo-500 w-48 h-48 mx-auto md:w-full md:h-auto object-cover" />
                     </div>
-                    <div className="md:w-2/3 text-lg text-gray-300 leading-relaxed">
+                    <div className="md:w-3/4 text-lg text-gray-300 leading-relaxed"> {/* Changed md:w-2/3 to md:w-3/4 */}
                         <p className="mb-4">
-                            Hello! I'm Alejandro, a [Your Profession] with a strong focus on [Your Niche/Specialty, e.g., front-end development, UI/UX design, data science]. I love bringing ideas to life through clean code and intuitive design.
+                            Hello! I'm Alejandro Chavez-Mayoral, a research-oriented senior pursuing a B.S. in Computer Science, and currently advancing my expertise as an M.S. in Computer Information Systems student at Kean University.
                         </p>
                         <p className="mb-4">
-                            My journey in [Your Field] began [mention how, e.g., X years ago, with a passion for problem-solving]. I thrive on learning new technologies and continuously improving my craft. I believe in creating user-centric solutions that are both functional and aesthetically pleasing.
+                            With two years of dedicated experience in image processing, computer vision, and AI research at Kean University, complemented by a summer REU at the University of Rochester, I am passionate about leveraging technology to solve complex problems. I have extensive experience coding in Python for various research projects and have also tutored Java fundamentals for two-and-a-half years.
                         </p>
                         <p>
-                            When I'm not coding or designing, you can find me [mention a hobby, e.g., exploring new hiking trails, reading sci-fi novels, experimenting with new recipes].
+                            My work has involved training AI models, programming GUIs for data visualization, and working in Linux environments. I am actively seeking full-time employment in AI/tech-related roles where I can apply my skills and continue to grow. I am also bilingual in English and Spanish.
                         </p>
                     </div>
                 </div>
@@ -136,15 +136,12 @@ const Skills = () => {
     const skillsList = [
         { name: 'Java', icon: '☕', imageUrl: 'Java.png' },
         { name: 'Python', icon: '🐍', imageUrl: 'Python.png' },
-        { name: 'PHP', icon: '🐘', imageUrl: '/images/php.png' },
-        { name: 'MySQL', icon: '🐬', imageUrl: 'https://placehold.co/60x60/00758f/ffffff?text=SQL' },
-        { name: 'HTML', icon: '📄', imageUrl: 'https://placehold.co/60x60/e34c26/ffffff?text=HTML' },
-        { name: 'Microsoft Office', icon: '📊', imageUrl: 'https://placehold.co/60x60/2a2a2a/ffffff?text=Office' },
-        { name: 'Linux Fedora', icon: '🐧', imageUrl: '/images/fedora.png' },
-        { name: 'Linux Ubuntu', icon: '💻', imageUrl: 'https://placehold.co/60x60/e95420/ffffff?text=Ubuntu' },
-        { name: 'Mac OS', icon: '🍎', imageUrl: '/images/macos.png' },
-        { name: 'Windows 10', icon: '🪟', imageUrl: '/images/windows.png' },
-        { name: 'MATLAB', icon: '📈', imageUrl: '/images/matlab.png' },
+        { name: 'PHP', icon: '🐘', imageUrl: 'PHP.png' },
+        { name: 'MySQL', icon: '🐬', imageUrl: 'MySQL.png' },
+        { name: 'HTML', icon: '📄', imageUrl: 'HTML.png' },
+        { name: 'Microsoft Office', icon: '📊', imageUrl: 'Office.png' },
+        { name: 'Linux Fedora', icon: '🐧', imageUrl: 'Fedora.png' },
+        { name: 'MATLAB', icon: '📈', imageUrl: 'MATLAB.png' }
     ];
 
     return (
@@ -192,7 +189,7 @@ const Projects = () => {
             title: 'Deep Learning-Based Classification of Pain Responses in Mice',
             date: 'Apr 2024',
             description: 'Developed a deep learning model for binary classification of mice pain using CNN architecture with a fully connected layer and sigmoid activation. Model developed using Python.',
-            imageUrl: 'MousePain.png',
+            imageUrl: 'MousePain.jpg',
             liveLink: '#',
             githubLink: '#'
         },
@@ -200,7 +197,7 @@ const Projects = () => {
             title: 'Machine Learning Analysis of Olfactory-Guided Food Seeking Behavior',
             date: 'Jul 2023',
             description: 'Researched classifying videos of mice displaying anoxia from anoxia related behavior by training a mammalian tracking model and using motion sequencing software. Primarily used Python.',
-            imageUrl: 'DeepLearning.png',
+            imageUrl: 'DeepLearning.jpg',
             liveLink: '#',
             githubLink: '#'
         },
@@ -208,7 +205,7 @@ const Projects = () => {
             title: 'Banking System and Database Using MySQL and PHP',
             date: 'May 2023',
             description: 'Programmed a mini banking system with HTML front-end and PHP/MySQL backend. Users could deposit, withdraw, view transaction history, and log in to a specific account.',
-            imageUrl: '/images/php.png',
+            imageUrl: 'Banking.jpg',
             liveLink: '#',
             githubLink: '#'
         },
@@ -216,7 +213,7 @@ const Projects = () => {
             title: 'Pre-Screening Vitals in Telehealth Using Remote Photoplethysmography',
             date: 'Sep 2022',
             description: 'Research tested measuring heart rate using image processing/computer vision methods on a diverse dataset of faces in different lightings. Discussed accuracy and practicality. Primarily used Python.',
-            imageUrl: '/images/telehealth.png',
+            imageUrl: 'Telehealth.PNG',
             liveLink: 'https://docs.google.com/presentation/d/1PsCYDHTr3hrXptPEoMQ7KMT_ej3YyEQA/edit?usp=sharing&ouid=117950792585934078015&rtpof=true&sd=true',
             githubLink: '#'
         },
