@@ -27,7 +27,7 @@ const App = () => {
         setMessages(newMessages);
         setInput('');
 
-        const GEMINI_API_KEY = ""; // Add your Gemini API key here
+        const GEMINI_API_KEY = process.env.GEMINI_API_KEY; // Add your Gemini API key here
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
         try {
