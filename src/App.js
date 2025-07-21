@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import Chatbot from './Chatbot'; // Import the new Chatbot component
+import Chatbot from 'Chatbot.js'; // Import the new Chatbot component
 
 // Main App Component
 const App = () => {
